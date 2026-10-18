@@ -1,9 +1,11 @@
 plugins {
-    id 'java'
+    id 'application'
 }
 
-group = 'ru.university.Task11'
-version = '1.0-SNAPSHOT'
+application {
+    mainClass = 'ru.university.task10.Main'
+    applicationDefaultJvmArgs = ['-Dstdout.encoding=UTF-8']
+}
 
 repositories {
     mavenCentral()
@@ -16,4 +18,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.named('run', JavaExec) {
+    standardInput = System.in
 }
