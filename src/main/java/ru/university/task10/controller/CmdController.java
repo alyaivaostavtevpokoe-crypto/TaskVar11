@@ -1,17 +1,21 @@
 package ru.university.task10.controller;
 
+import java.util.Scanner;
+import java.sql.SQLException;
+import ru.university.task10.model.Player;
 import ru.university.task10.model.Unit;
 import ru.university.task10.model.Wall;
 import ru.university.task10.service.BattleService;
-
-import java.util.Scanner;
+import ru.university.task10.service.PlayerService;
 
 public class CmdController {
     private BattleService service;
+    private PlayerService players;
     private Scanner scanner;
 
-    public CmdController(BattleService service, Scanner scanner) {
+    public CmdController(BattleService service, PlayerService players, Scanner scanner) {
         this.service = service;
+        this.players = players;
         this.scanner = scanner;
     }
 
@@ -25,6 +29,7 @@ public class CmdController {
             System.out.println("6 - список объектов");
             System.out.println("7 - убрать юнит");
             System.out.println("8 - убрать препятствие");
+            System.out.println("9 - игроки");
             System.out.println("0 - выход");
             System.out.print("выбор: ");
             if (!scanner.hasNextLine()) return;
@@ -47,10 +52,46 @@ public class CmdController {
             } else if (n.equals("8")) {
                 int id = readNum("номер препятствия: ");
                 System.out.println(service.removeWall(id) ? "убрано" : "препятствие не найдено");
+            } else if (n.equals("9")) {
+                playerMenu();
             } else if (n.equals("0")) {
                 return;
             } else {
                 System.out.println("нет такого пункта");
+            }
+        }
+    }
+
+    private void playerMenu() {
+        while (true) {
+            System.out.println("\n1 - список игроков");
+            System.out.println("2 - добавить игрока");
+            System.out.println("3 - переименовать игрока");
+            System.out.println("4 - удалить игрока");
+            System.out.println("0 - назад");
+            String n = readLine("выбор: ");
+            if (n.equals("0")) return;
+            try {
+                if (n.equals("1")) {
+                    if (players.getAll().isEmpty()) System.out.println("игроков пока нет");
+                    for (Player p : players.getAll()) {
+                        System.out.println(p.getId() + " - " + p.getName());
+                    }
+                } else if (n.equals("2")) {
+                    int id = players.add(readLine("имя: "));
+                    System.out.println(id == -1 ? "не удалось добавить" : "добавлен игрок " + id);
+                } else if (n.equals("3")) {
+                    int id = readNum("номер игрока: ");
+                    String name = readLine("новое имя: ");
+                    System.out.println(players.rename(id, name) ? "переименован" : "не удалось переименовать");
+                } else if (n.equals("4")) {
+                    int id = readNum("номер игрока: ");
+                    System.out.println(players.delete(id) ? "удален" : "игрок не найден");
+                } else {
+                    System.out.println("нет такого пункта");
+                }
+            } catch (SQLException e) {
+                System.out.println("ошибка базы игроков: " + e.getMessage());
             }
         }
     }

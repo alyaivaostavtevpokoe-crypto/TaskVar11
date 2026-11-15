@@ -1,9 +1,12 @@
+
 package task10;
 
 import org.junit.jupiter.api.Test;
 import ru.university.task10.controller.CmdController;
 import ru.university.task10.repository.BattleRepositoryInMemoryImpl;
+import ru.university.task10.repository.PlayerRepositoryInMemoryImpl;
 import ru.university.task10.service.BattleService;
+import ru.university.task10.service.PlayerService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -20,7 +23,9 @@ public class CmdControllerTest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try {
             System.setOut(new PrintStream(bytes, true, "UTF-8"));
-            CmdController c = new CmdController(new BattleService(new BattleRepositoryInMemoryImpl()),
+            CmdController c = new CmdController(
+                    new BattleService(new BattleRepositoryInMemoryImpl()),
+                    new PlayerService(new PlayerRepositoryInMemoryImpl()),
                     new Scanner(input));
             c.run();
         } finally {
